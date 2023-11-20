@@ -1,6 +1,8 @@
 #ifndef LIST_INCLUDE_LIST_H
 #define LIST_INCLUDE_LIST_H
 
+#include "Random.h"
+
 template <typename T>
 struct Node {
 	Node* next, * prev;
@@ -14,7 +16,7 @@ class CyclicList {
 	Node<T>* _head, * _tail;
 	size_t _size;
 public:
-	CyclicList() : _head(nullptr), _tail(nullptr) {};
+	CyclicList() : _head(nullptr), _tail(nullptr) _size(0) {};
 
     CyclicList(const CyclicList& other) {
         _head = nullptr;
@@ -28,6 +30,23 @@ public:
             this->push_tail(*new_tmp);
             tmp = tmp->next;
         }
+    }
+
+
+    CyclicList& operator=(const CyclicList& other) {
+        if (this != &other) {
+            clear();
+            Node<T>* tmp = other._head;
+            while (tmp != nullptr) {
+                push_tail(tmp->data);
+                tmp = tmp->next;
+            }
+        }
+        return *this;
+    }
+
+    size_t size() const {
+        return _size;
     }
 
     void push_head(const T& data) {
@@ -45,6 +64,7 @@ public:
             _head->prev = tmp;
             _head = tmp;
         }
+        _size++;
     }
 
     void push_tail(const T& data) {
@@ -124,6 +144,39 @@ public:
             }
             tmp = tmp->next;
         }
+    }
+
+    void pop_head() {
+        if (_head == nullptr) {
+            return;
+        }
+        if (_head == _tail) {
+            delete _head;
+            _head = nullptr;
+            _tail = nullptr;
+        }
+        else {
+            Node<T>* new_head = _head->next;
+            new_head->prev = _tail;
+            _tail->next = new_head;
+            delete _head;
+            _head = new_head;
+        }
+        _size--;
+    }
+
+    void clear() {
+        while (!empty()) {
+            pop_head();
+        }
+    }
+
+    ~CyclicList() {
+        clear();
+    }
+
+    bool empty() const {
+        return (_size == 0);
     }
 };
 #endif
