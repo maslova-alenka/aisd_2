@@ -1,6 +1,14 @@
 #ifndef LIST_INCLUDE_LIST_H
 #define LIST_INCLUDE_LIST_H
 
+#include <stdexcept>
+#include <cstdio>
+#include <cstdlib>
+#include <iostream>
+#include <ctime>
+#include <random>
+#include <cmath>
+
 #include "Random.h"
 
 template <typename T>
@@ -16,7 +24,14 @@ class CyclicList {
 	Node<T>* _head, * _tail;
 	size_t _size;
 public:
-	CyclicList() : _head(nullptr), _tail(nullptr) _size(0) {};
+	CyclicList() : _head(nullptr), _tail(nullptr), _size(0) {};
+
+    CyclicList(size_t size, T min_value, T max_value) {
+        for (size_t i = 0; i < size; i++) {
+            T value = static_cast<T>(rand()) / RAND_MAX * (max_value - min_value) + min_value;
+            push_tail(value);
+        }
+    }
 
     CyclicList(const CyclicList& other) {
         _head = nullptr;
@@ -49,8 +64,8 @@ public:
         return _size;
     }
 
-    void push_head(const T& data) {
-        Node<T>* tmp = new Node<T>{ nullptr, nullptr, data };
+    void push_head(T data) {
+        Node<T>* tmp = new Node<T>(data);
         if (_head == nullptr) {
             _head = tmp;
             _tail = tmp;
@@ -67,8 +82,8 @@ public:
         _size++;
     }
 
-    void push_tail(const T& data) {
-        Node<T>* tmp = new Node<T>{ nullptr, nullptr, data };
+    void push_tail(T data) {
+        Node<T>* tmp = new Node<T>(data);
         if (_head == nullptr) {
             _head = tmp;
             _tail = tmp;
@@ -82,6 +97,7 @@ public:
             _head->prev = tmp;
             _tail = tmp;
         }
+        _size++;
     }
 
     void push_head(const CyclicList<T>& other) {
@@ -100,21 +116,19 @@ public:
         head_prev->next = _head;
     }
 
-    void push_tail(const CyclicList<T>& other) {
-        Node<T>* other_head_prev = other._head->prev;
-        Node<T>* tail_next = _tail->next;
-
-
-        other._head->prev = _tail;
-        _tail->next = _head;
-        other._tail->next = _head;
-        _head->prev = other._tail;
-
-        _tail = other._tail;
-        _head = other_head_prev->next;
-
-        _head->prev = _tail;
-        _tail->next = _head;
+    void push_tail(const CyclicList& other) {
+        if (other.empty()) {
+            return;
+        }
+        if (empty()) {
+            *this = other;
+            return;
+        }
+        Node<T>* other_head = other._head;
+        do {
+            push_tail(other_head->data);
+            other_head = other_head->next;
+        } while (other_head != other._head);
     }
 
     void delete_node(T data) {
@@ -165,6 +179,102 @@ public:
         _size--;
     }
 
+    void pop_tail() {
+        if (_tail == nullptr) {
+            return;
+        }
+        if (_head == _tail) {
+            delete _tail;
+            _head = nullptr;
+            _tail = nullptr;
+        }
+        else {
+            Node<T>* new_tail = _tail->prev;
+            new_tail->next = _head;
+            _head->prev = new_tail;
+            delete _tail;
+            _tail = new_tail;
+        }
+        _size--;
+    }
+
+    Node<T>* operator[](int index) {
+        if (index < 0 || index >= _size) {
+            throw std::out_of_range("In operator[]: index is out of range");
+        }
+
+        Node<T>* head = _head;
+        for (int i = 0; i < index; i++) {
+            head = head->next;
+        }
+
+        return head;
+    }
+
+    Node<T>* operator[](int index) const {
+        if (index < 0 || index >= _size) {
+            throw std::out_of_range("In operator[]: index is out of range");
+        }
+
+        Node<T>* head = _head;
+        for (int i = 0; i < index; i++) {
+            head = head->next;
+        }
+
+        return head;
+    }
+
+
+    T& operator[](size_t index){
+        if (index >= _size) {
+            throw std::out_of_range("Index out of range");
+        }
+
+        Node<T>* current = _head;
+
+        for (size_t i = 0; i < index; i++) {
+            current = current->next;
+        }
+
+        return current->data;
+    }
+
+    const T& operator[](size_t index) const {
+        if (index >= _size) {
+            throw std::out_of_range("Index out of range");
+        }
+
+        Node<T>* current = _head;
+
+        for (size_t i = 0; i < index; i++) {
+            current = current->next;
+        }
+
+        return current->data;
+    }
+
+    void reverse() {
+        if (_head == nullptr || _head == _tail) {
+            return; // Nothing to reverse
+        }
+
+        Node<T>* current = _head;
+
+        while (current != _head) {
+            Node<T>* temp_next = current->next;
+
+            current->next = current->prev;
+            current->prev = temp_next;
+
+            current = temp_next;
+         }
+
+        // Swap head and tail
+        Node<T>* temp_head = _head;
+        _head = _tail;
+        _tail = temp_head;
+    }
+
     void clear() {
         while (!empty()) {
             pop_head();
@@ -178,5 +288,6 @@ public:
     bool empty() const {
         return (_size == 0);
     }
+
 };
 #endif
