@@ -6,9 +6,12 @@
 int main() {
     CyclicList<int> list;
 
-    list.push_tail(1);
-    list.push_tail(2);
-    list.push_tail(3);
+    list.push_tail(4);
+    list.push_tail(5);
+    list.push_tail(6);
+    list.push_head(3);
+    list.push_head(2);
+    list.push_head(1);
 
     std::cout << "Original list: ";
     for (size_t i = 0; i < list.size(); i++) {
@@ -21,6 +24,39 @@ int main() {
     std::cout << "Reversed list: ";
     for (size_t i = 0; i < list.size(); i++) {
         std::cout << list[i] << " ";
+    }
+    std::cout << std::endl;
+
+    list.pop_head();
+    list.pop_tail();
+
+    std::cout << "Original list: ";
+    for (size_t i = 0; i < list.size(); i++) {
+        std::cout << list[i] << " ";
+    }
+    std::cout << std::endl;
+
+    list.reverse();
+
+    std::cout << "Reversed list: ";
+    for (size_t i = 0; i < list.size(); i++) {
+        std::cout << list[i] << " ";
+    }
+    std::cout << std::endl;
+
+    CyclicList<int> rand_list(5, 1, 8);
+
+    std::cout << "Original list: ";
+    for (size_t i = 0; i < rand_list.size(); i++) {
+        std::cout << rand_list[i] << " ";
+    }
+    std::cout << std::endl;
+
+    rand_list.reverse();
+
+    std::cout << "Reversed list: ";
+    for (size_t i = 0; i < rand_list.size(); i++) {
+        std::cout << rand_list[i] << " ";
     }
     std::cout << std::endl;
 

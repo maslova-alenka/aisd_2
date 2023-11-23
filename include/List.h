@@ -17,6 +17,13 @@ struct Node {
 	T data;
 
 	Node(T data) : data(data), prev(nullptr), next(nullptr) {};
+
+    //Node(Node* next, Node* prev, T data) :next(next), prev(prev), data(data) {};
+    //Node(const Node<T>& other) {
+    //    next = nullptr;
+    //    prev = nullptr;
+    //    data = new T(other._data);
+    //}
 };
 
 template <typename T>
@@ -26,10 +33,47 @@ class CyclicList {
 public:
 	CyclicList() : _head(nullptr), _tail(nullptr), _size(0) {};
 
-    CyclicList(size_t size, T min_value, T max_value) {
-        for (size_t i = 0; i < size; i++) {
-            T value = static_cast<T>(rand()) / RAND_MAX * (max_value - min_value) + min_value;
-            push_tail(value);
+    //CyclicList(size_t size, T min_value, T max_value) {
+    //    for (size_t i = 0; i < size; i++) {
+    //        T value = static_cast<T>(rand()) / RAND_MAX * (max_value - min_value) + min_value;
+    //        this->push_tail(value);
+    //    }
+    //}
+
+    //CyclicList(size_t size) {
+    //    _head = nullptr;
+    //    _tail = nullptr;
+    //    for (size_t i = 0; i < size; i++) {
+    //        push_tail(new Node<T>(new T(random<T>())));
+    //    }
+    //}
+
+    /*(new Node<T>(new T(random<T>())));*/
+
+/* (Node<T>(T(random<T>())))*/
+
+
+    CyclicList(size_t size, T lower_bound, T upper_bound) :CyclicList() {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+
+        if constexpr (std::is_integral_v<T>) {
+            std::uniform_int_distribution<T> dist(lower_bound, upper_bound);
+
+            for (size_t i = 0; i < size; ++i) {
+                T data = dist(gen);
+                push_tail(data);
+            }
+            _size = size;
+        }
+        else if constexpr (std::is_floating_point_v<T>) {
+            std::uniform_real_distribution<T> dist(lower_bound, upper_bound);
+
+            for (size_t i = 0; i < size; ++i) {
+                T data = dist(gen);
+                push_tail(data);
+            }
+            _size = size;
         }
     }
 
@@ -125,10 +169,17 @@ public:
             return;
         }
         Node<T>* other_head = other._head;
-        do {
+        while(other_head) {
             push_tail(other_head->data);
             other_head = other_head->next;
-        } while (other_head != other._head);
+        }
+
+        //other._head->prev = _tail; 
+        //_tail->next = other._head;
+        //other._tail->next = _head;
+        //_head->prev = other._tail;
+        //_tail = other._tail;
+        //_size += other._size;
     }
 
     void delete_node(T data) {
@@ -260,14 +311,14 @@ public:
 
         Node<T>* current = _head;
 
-        while (current != _head) {
+        do {
             Node<T>* temp_next = current->next;
 
             current->next = current->prev;
             current->prev = temp_next;
 
             current = temp_next;
-         }
+        } while (current != _head);
 
         // Swap head and tail
         Node<T>* temp_head = _head;
