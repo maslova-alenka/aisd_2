@@ -9,7 +9,6 @@
 #include <random>
 #include <cmath>
 
-#include "Random.h"
 
 template <typename T>
 struct Node {
@@ -17,13 +16,6 @@ struct Node {
 	T data;
 
 	Node(T data) : data(data), prev(nullptr), next(nullptr) {};
-
-    //Node(Node* next, Node* prev, T data) :next(next), prev(prev), data(data) {};
-    //Node(const Node<T>& other) {
-    //    next = nullptr;
-    //    prev = nullptr;
-    //    data = new T(other._data);
-    //}
 };
 
 template <typename T>
@@ -32,26 +24,6 @@ class CyclicList {
 	size_t _size;
 public:
 	CyclicList() : _head(nullptr), _tail(nullptr), _size(0) {};
-
-    //CyclicList(size_t size, T min_value, T max_value) {
-    //    for (size_t i = 0; i < size; i++) {
-    //        T value = static_cast<T>(rand()) / RAND_MAX * (max_value - min_value) + min_value;
-    //        this->push_tail(value);
-    //    }
-    //}
-
-    //CyclicList(size_t size) {
-    //    _head = nullptr;
-    //    _tail = nullptr;
-    //    for (size_t i = 0; i < size; i++) {
-    //        push_tail(new Node<T>(new T(random<T>())));
-    //    }
-    //}
-
-    /*(new Node<T>(new T(random<T>())));*/
-
-/* (Node<T>(T(random<T>())))*/
-
 
     CyclicList(size_t size, T lower_bound, T upper_bound) :CyclicList() {
         std::random_device rd;
@@ -173,38 +145,38 @@ public:
             push_tail(other_head->data);
             other_head = other_head->next;
         }
-
-        //other._head->prev = _tail; 
-        //_tail->next = other._head;
-        //other._tail->next = _head;
-        //_head->prev = other._tail;
-        //_tail = other._tail;
-        //_size += other._size;
     }
+
+    int get_len() {
+        if (_head == nullptr)
+            return 0;
+        int len = 1;
+        Node<T>* node = _head->next;
+        while (node != _head) {
+            len += 1;
+            node = node->next;
+        }
+        return len;
+    }
+
 
     void delete_node(T data) {
         Node <T>* tmp = _head;
-        while (tmp != nullptr) {
+        int len = this->get_len();
+        for (int i = 0; i < len; i++) {
             if (tmp->data == data) {
                 if (tmp == _head)
                 {
-                    Node<T>* new_head = _head->next;
-                    new_head->prev = nullptr;
-                    delete _head;
-                    _head = new_head;
+                    this->pop_head();
                 }
                 else if (tmp == _tail)
                 {
-                    Node<T>* new_tail = _tail->prev;
-                    new_tail->next = nullptr;
-                    delete _tail;
-                    _tail = new_tail;
+                    this->pop_tail();
                 }
                 else
                 {
                     tmp->prev->next = tmp->next;
                     tmp->next->prev = tmp->prev;
-                    delete tmp;
                 }
             }
             tmp = tmp->next;
@@ -306,7 +278,7 @@ public:
 
     void reverse() {
         if (_head == nullptr || _head == _tail) {
-            return; // Nothing to reverse
+            return;
         }
 
         Node<T>* current = _head;
@@ -320,7 +292,7 @@ public:
             current = temp_next;
         } while (current != _head);
 
-        // Swap head and tail
+        
         Node<T>* temp_head = _head;
         _head = _tail;
         _tail = temp_head;

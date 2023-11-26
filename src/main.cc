@@ -27,10 +27,11 @@ int main() {
     }
     std::cout << std::endl;
 
+
     list.pop_head();
     list.pop_tail();
 
-    std::cout << "Original list: ";
+    std::cout << "Original list with pop_head() and pop_tail(): ";
     for (size_t i = 0; i < list.size(); i++) {
         std::cout << list[i] << " ";
     }
@@ -38,11 +39,22 @@ int main() {
 
     list.reverse();
 
-    std::cout << "Reversed list: ";
+    std::cout << "Reversed list with pop_head() and pop_tail(): ";
     for (size_t i = 0; i < list.size(); i++) {
         std::cout << list[i] << " ";
     }
     std::cout << std::endl;
+
+
+    list.delete_node(5);
+
+    std::cout << "List with 'delete_node()': ";
+    for (size_t i = 0; i < list.size(); i++) {
+        std::cout << list[i] << " ";
+    }
+    std::cout << std::endl;
+
+
 
     CyclicList<int> rand_list(5, 1, 8);
 

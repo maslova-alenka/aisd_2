@@ -17,4 +17,4 @@ if(MSVC)
     endif()
 endif()
 
-add_executable(main "src/main.cc" "include/Random.h")
+add_executable(main "src/main.cc" )
