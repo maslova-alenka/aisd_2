@@ -116,22 +116,6 @@ public:
         _size++;
     }
 
- /*   void push_head(const CyclicList<T>& other) {
-        Node<T>* other_tail_next = other._tail->next;
-        Node<T>* head_prev = _head->prev;
-
-        other._tail->next = _head;
-        _head->prev = other._tail;
-        other._head->prev = _tail;
-        _tail->next = other._head;
-
-        _head = other._head;
-        _tail = other_tail_next->prev;
-
-        _head->prev = head_prev;
-        head_prev->next = _head;
-    }*/
-
 
     void push_head(const CyclicList<T>& other) {
         if (other.empty()) {
@@ -292,27 +276,6 @@ public:
         return current->data;
     }
 
-
-       /* if (_head == nullptr || _head == _tail) {
-            return;
-        }
-
-        Node<T>* current = _head;
-
-        do {
-            Node<T>* temp_next = current->next;
-
-            current->next = current->prev;
-            current->prev = temp_next;
-
-            current = temp_next;
-        } while (current != _head);
-
-        
-        Node<T>* temp_head = _head;
-        _head = _tail;
-        _tail = temp_head;
-    }*/
 
     void clear() {
         while (!empty()) {
