@@ -1,7 +1,7 @@
+#include "../include/List.h"
 
 #include<cmath>
 #include <iostream>
-#include "../include/List.h"
 
 int main() {
     CyclicList<int> list;
@@ -31,7 +31,7 @@ int main() {
     list.pop_head();
     list.pop_tail();
 
-    std::cout << "Original list with pop_head() and pop_tail(): ";
+    std::cout << "Reversed list with pop_head() and pop_tail(): ";
     for (size_t i = 0; i < list.size(); i++) {
         std::cout << list[i] << " ";
     }
@@ -39,7 +39,7 @@ int main() {
 
     list.reverse();
 
-    std::cout << "Reversed list with pop_head() and pop_tail(): ";
+    std::cout << "Original list with pop_head() and pop_tail(): ";
     for (size_t i = 0; i < list.size(); i++) {
         std::cout << list[i] << " ";
     }

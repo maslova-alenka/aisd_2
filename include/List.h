@@ -116,7 +116,7 @@ public:
         _size++;
     }
 
-    void push_head(const CyclicList<T>& other) {
+ /*   void push_head(const CyclicList<T>& other) {
         Node<T>* other_tail_next = other._tail->next;
         Node<T>* head_prev = _head->prev;
 
@@ -130,9 +130,25 @@ public:
 
         _head->prev = head_prev;
         head_prev->next = _head;
+    }*/
+
+
+    void push_head(const CyclicList<T>& other) {
+        if (other.empty()) {
+            return;
+        }
+        if (empty()) {
+            *this = other;
+            return;
+        }
+        Node<T>* other_head = other._head;
+        while (other_head) {
+            push_head(other_head->data);
+            other_head = other_head->next;
+        }
     }
 
-    void push_tail(const CyclicList& other) {
+    void push_tail(const CyclicList<T>& other) {
         if (other.empty()) {
             return;
         }
@@ -221,7 +237,7 @@ public:
         _size--;
     }
 
-    Node<T>* operator[](int index) {
+    /*Node<T>* operator[](int index) {
         if (index < 0 || index >= _size) {
             throw std::out_of_range("In operator[]: index is out of range");
         }
@@ -245,7 +261,7 @@ public:
         }
 
         return head;
-    }
+    }*/
 
 
     T& operator[](size_t index){
@@ -276,8 +292,8 @@ public:
         return current->data;
     }
 
-    void reverse() {
-        if (_head == nullptr || _head == _tail) {
+
+       /* if (_head == nullptr || _head == _tail) {
             return;
         }
 
@@ -296,7 +312,7 @@ public:
         Node<T>* temp_head = _head;
         _head = _tail;
         _tail = temp_head;
-    }
+    }*/
 
     void clear() {
         while (!empty()) {
@@ -312,5 +328,30 @@ public:
         return (_size == 0);
     }
 
+    void reverse();
 };
+
+
+template<typename T>
+void CyclicList<T>:: reverse() {
+    if (_head == nullptr || _head == _tail) {
+        return;
+    }
+
+    Node<T>* current = _head;
+
+    do {
+        Node<T>* temp_next = current->next;
+
+        current->next = current->prev;
+        current->prev = temp_next;
+
+        current = temp_next;
+    } while (current != _head);
+
+
+    Node<T>* temp_head = _head;
+    _head = _tail;
+    _tail = temp_head;
+}
 #endif
